@@ -1,6 +1,6 @@
 module wren.math;
 
-nothrow @nogc:
+
 
 // Note: We had to get rid of the union here, as CTFE
 // does not allow us to reinterpret fields via field

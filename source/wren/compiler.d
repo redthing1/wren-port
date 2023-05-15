@@ -6,7 +6,7 @@ import wren.utils;
 import wren.value;
 import wren.vm;
 
-nothrow @nogc:
+
 // This is written in bottom-up order, so the tokenization comes first, then
 // parsing/code generation. This minimizes the number of explicit forward
 // declarations needed.

@@ -3,7 +3,7 @@ import wren.common;
 import wren.math;
 import wren.utils;
 
-nothrow @nogc:
+
 // This defines the built-in types and their core representations in memory.
 // Since Wren is dynamically typed, any variable can hold a value of any type,
 // and the type can change at runtime. Implementing this efficiently is
@@ -101,21 +101,21 @@ struct ValueBuffer
     int capacity;
 };
 
-void wrenValueBufferInit(ValueBuffer* buffer) nothrow @nogc
+void wrenValueBufferInit(ValueBuffer* buffer) 
 {
     buffer.data = null;
     buffer.capacity = 0;
     buffer.count = 0;
 }
 
-void wrenValueBufferClear(VM)(VM* vm, ValueBuffer* buffer) @nogc
+void wrenValueBufferClear(VM)(VM* vm, ValueBuffer* buffer)
 {
     import wren.vm : wrenReallocate;
     wrenReallocate(vm, buffer.data, 0, 0);
     wrenValueBufferInit(buffer);
 }
 
-void wrenValueBufferFill(VM)(VM* vm, ValueBuffer* buffer, Value data, int count) @nogc
+void wrenValueBufferFill(VM)(VM* vm, ValueBuffer* buffer, Value data, int count)
 {
     import wren.vm : wrenReallocate;
     if (buffer.capacity < buffer.count + count) {
@@ -130,7 +130,7 @@ void wrenValueBufferFill(VM)(VM* vm, ValueBuffer* buffer, Value data, int count)
     }
 }
 
-void wrenValueBufferWrite(VM)(VM* vm, ValueBuffer* buffer, Value data) @nogc
+void wrenValueBufferWrite(VM)(VM* vm, ValueBuffer* buffer, Value data)
 {
     wrenValueBufferFill(vm, buffer, data, 1);
 }
@@ -290,21 +290,21 @@ struct StringBuffer
     int capacity;
 };
 
-void wrenStringBufferInit(StringBuffer* buffer) nothrow @nogc
+void wrenStringBufferInit(StringBuffer* buffer) 
 {
     buffer.data = null;
     buffer.capacity = 0;
     buffer.count = 0;
 }
 
-void wrenStringBufferClear(VM)(VM* vm, StringBuffer* buffer) @nogc
+void wrenStringBufferClear(VM)(VM* vm, StringBuffer* buffer)
 {
     import wren.vm : wrenReallocate;
     wrenReallocate(vm, buffer.data, 0, 0);
     wrenStringBufferInit(buffer);
 }
 
-void wrenStringBufferFill(VM)(VM* vm, StringBuffer* buffer, ObjString* data, int count) @nogc
+void wrenStringBufferFill(VM)(VM* vm, StringBuffer* buffer, ObjString* data, int count)
 {
     import wren.vm : wrenReallocate;
     if (buffer.capacity < buffer.count + count) {
@@ -319,7 +319,7 @@ void wrenStringBufferFill(VM)(VM* vm, StringBuffer* buffer, ObjString* data, int
     }
 }
 
-void wrenStringBufferWrite(VM)(VM* vm, StringBuffer* buffer, ObjString* data) @nogc
+void wrenStringBufferWrite(VM)(VM* vm, StringBuffer* buffer, ObjString* data)
 {
     wrenStringBufferFill(vm, buffer, data, 1);
 }
@@ -331,21 +331,21 @@ alias SymbolTable = StringBuffer;
 import wren.vm;
 
 // Initializes the symbol table.
-void wrenSymbolTableInit(SymbolTable* symbols) @nogc
+void wrenSymbolTableInit(SymbolTable* symbols)
 {
     wrenStringBufferInit(symbols);
 }
 
 // Frees all dynamically allocated memory used by the symbol table, but not the
 // SymbolTable itself.
-void wrenSymbolTableClear(WrenVM* vm, SymbolTable* symbols) @nogc
+void wrenSymbolTableClear(WrenVM* vm, SymbolTable* symbols)
 {
     wrenStringBufferClear(vm, symbols);
 }
 
 // Adds name to the symbol table. Returns the index of it in the table.
 int wrenSymbolTableAdd(WrenVM* vm, SymbolTable* symbols,
-                       const(char)* name, size_t length) @nogc
+                       const(char)* name, size_t length)
 {
     ObjString* symbol = AS_STRING(wrenNewStringLength(vm, name, length));
   
@@ -359,7 +359,7 @@ int wrenSymbolTableAdd(WrenVM* vm, SymbolTable* symbols,
 // Adds name to the symbol table. Returns the index of it in the table. Will
 // use an existing symbol if already present.
 int wrenSymbolTableEnsure(WrenVM* vm, SymbolTable* symbols,
-                          const(char)* name, size_t length) @nogc
+                          const(char)* name, size_t length)
 {
     // See if the symbol is already defined.
     int existing = wrenSymbolTableFind(symbols, name, length);
@@ -371,7 +371,7 @@ int wrenSymbolTableEnsure(WrenVM* vm, SymbolTable* symbols,
 
 // Looks up name in the symbol table. Returns its index if found or -1 if not.
 int wrenSymbolTableFind(const SymbolTable* symbols,
-                        const(char)* name, size_t length) @nogc
+                        const(char)* name, size_t length)
 {
     // See if the symbol is already defined.
     // TODO: O(n). Do something better.
@@ -383,7 +383,7 @@ int wrenSymbolTableFind(const SymbolTable* symbols,
     return -1;
 }
 
-void wrenBlackenSymbolTable(WrenVM* vm, SymbolTable* symbolTable) @nogc
+void wrenBlackenSymbolTable(WrenVM* vm, SymbolTable* symbolTable)
 {
     for (int i = 0; i < symbolTable.count; i++)
     {
@@ -621,21 +621,21 @@ struct MethodBuffer
     int capacity;
 };
 
-void wrenMethodBufferInit(MethodBuffer* buffer) nothrow @nogc
+void wrenMethodBufferInit(MethodBuffer* buffer) 
 {
     buffer.data = null;
     buffer.capacity = 0;
     buffer.count = 0;
 }
 
-void wrenMethodBufferClear(VM)(VM* vm, MethodBuffer* buffer) @nogc
+void wrenMethodBufferClear(VM)(VM* vm, MethodBuffer* buffer)
 {
     import wren.vm : wrenReallocate;
     wrenReallocate(vm, buffer.data, 0, 0);
     wrenMethodBufferInit(buffer);
 }
 
-void wrenMethodBufferFill(VM)(VM* vm, MethodBuffer* buffer, Method data, int count) @nogc
+void wrenMethodBufferFill(VM)(VM* vm, MethodBuffer* buffer, Method data, int count)
 {
     import wren.vm : wrenReallocate;
     if (buffer.capacity < buffer.count + count) {
@@ -650,7 +650,7 @@ void wrenMethodBufferFill(VM)(VM* vm, MethodBuffer* buffer, Method data, int cou
     }
 }
 
-void wrenMethodBufferWrite(VM)(VM* vm, MethodBuffer* buffer, Method data) @nogc
+void wrenMethodBufferWrite(VM)(VM* vm, MethodBuffer* buffer, Method data)
 {
     wrenMethodBufferFill(vm, buffer, data, 1);
 }

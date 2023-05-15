@@ -2,14 +2,14 @@ import core.stdc.stdio;
 import wren.compiler;
 import wren.vm;
 
-static void writeFn(WrenVM* vm, const(char)* text) @nogc
+static void writeFn(WrenVM* vm, const(char)* text)
 {
 	printf("%s", text);
 }
 
 static void errorFn(WrenVM* vm, WrenErrorType errorType,
 					const(char)* module_, int line,
-					const(char)* msg) @nogc
+					const(char)* msg)
 {
 	switch (errorType) with(WrenErrorType)
 	{

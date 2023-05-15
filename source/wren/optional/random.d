@@ -16,7 +16,7 @@ struct Well512
 }
 
 // Code from: http://www.lomont.org/Math/Papers/2008/Lomont_PRNG_2008.pdf
-uint advanceState(Well512* well) @nogc
+uint advanceState(Well512* well)
 {
     uint a, b, c, d;
     a = well.state[well.index];
@@ -33,13 +33,13 @@ uint advanceState(Well512* well) @nogc
     return well.state[well.index];
 }
 
-void randomAllocate(WrenVM* vm) @nogc
+void randomAllocate(WrenVM* vm)
 {
     Well512* well = cast(Well512*)wrenSetSlotNewForeign(vm, 0, 0, Well512.sizeof);
     well.index = 0;
 }
 
-void randomSeed0(WrenVM* vm) @nogc
+void randomSeed0(WrenVM* vm)
 {
     import core.stdc.stdlib : srand, rand;
     import core.stdc.time : time;
@@ -53,7 +53,7 @@ void randomSeed0(WrenVM* vm) @nogc
     }
 }
 
-void randomSeed1(WrenVM* vm) @nogc
+void randomSeed1(WrenVM* vm)
 {
     import core.stdc.stdlib : srand, rand;
     Well512* well = cast(Well512*)wrenGetSlotForeign(vm, 0);
@@ -65,7 +65,7 @@ void randomSeed1(WrenVM* vm) @nogc
     }
 }
 
-void randomSeed16(WrenVM* vm) @nogc
+void randomSeed16(WrenVM* vm)
 {
     Well512* well = cast(Well512*)wrenGetSlotForeign(vm, 0);
 
@@ -75,7 +75,7 @@ void randomSeed16(WrenVM* vm) @nogc
     }
 }
 
-void randomFloat(WrenVM* vm) @nogc
+void randomFloat(WrenVM* vm)
 {
     Well512* well = cast(Well512*)wrenGetSlotForeign(vm, 0);
 
@@ -95,21 +95,21 @@ void randomFloat(WrenVM* vm) @nogc
     wrenSetSlotDouble(vm, 0, result);
 }
 
-void randomInt0(WrenVM* vm) @nogc
+void randomInt0(WrenVM* vm)
 {
     Well512* well = cast(Well512*)wrenGetSlotForeign(vm, 0);
 
     wrenSetSlotDouble(vm, 0, cast(double)advanceState(well));
 }
 
-const(char)[] wrenRandomSource() @nogc
+const(char)[] wrenRandomSource()
 {
     return randomModuleSource;
 }
 
 WrenForeignClassMethods wrenRandomBindForeignClass(WrenVM* vm,
                                                     const(char)* module_,
-                                                    const(char)* className) @nogc
+                                                    const(char)* className)
 {
     import core.stdc.string : strcmp;
     assert(strcmp(className, "Random") == 0, "Should be in Random class.");
@@ -122,7 +122,7 @@ WrenForeignClassMethods wrenRandomBindForeignClass(WrenVM* vm,
 WrenForeignMethodFn wrenRandomBindForeignMethod(WrenVM* vm,
                                                 const(char)* className,
                                                 bool isStatic,
-                                                const(char)* signature) @nogc
+                                                const(char)* signature)
 {
     import core.stdc.string : strcmp;
     assert(strcmp(className, "Random") == 0, "Should be in Random class.");

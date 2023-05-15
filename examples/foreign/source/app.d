@@ -52,14 +52,14 @@ void main()
 	wrenFreeVM(vm);
 }
 
-static void writeFn(WrenVM* vm, const(char)* text) @nogc
+static void writeFn(WrenVM* vm, const(char)* text)
 {
 	printf("%s", text);
 }
 
 static void errorFn(WrenVM* vm, WrenErrorType errorType,
 					const(char)* module_, int line,
-					const(char)* msg) @nogc
+					const(char)* msg)
 {
     switch (errorType) with(WrenErrorType)
     {
@@ -87,7 +87,7 @@ static void errorFn(WrenVM* vm, WrenErrorType errorType,
 }
 
 WrenForeignMethodFn bindForeignMethod(WrenVM* vm, const(char)* module_, 
-                                      const(char)* className, bool isStatic, const(char)* signature) @nogc
+                                      const(char)* className, bool isStatic, const(char)* signature)
 {
     printf("sig = %s\n", signature);     
     if (strcmp(signature, "myfun_(_,_,_)") == 0)
@@ -95,7 +95,7 @@ WrenForeignMethodFn bindForeignMethod(WrenVM* vm, const(char)* module_,
     return null;
 }
 
-void myFun(WrenVM* vm) @nogc
+void myFun(WrenVM* vm)
 {
     double a = wrenGetSlotDouble(vm, 1);
     double b = wrenGetSlotDouble(vm, 2);

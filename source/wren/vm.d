@@ -5,7 +5,7 @@ import wren.opcodes;
 import wren.value;
 import wren.utils;
 
-nothrow @nogc:
+
 
 // The type of a primitive function.
 //
@@ -2469,7 +2469,7 @@ bool wrenIsFalsyValue(Value value)
 
 // XXX: move this to `wren.vm`?
 // Use the VM's allocator to allocate an object of [type].
-T* ALLOCATE(T)(WrenVM* vm) @nogc
+T* ALLOCATE(T)(WrenVM* vm)
 {
     import wren.vm : wrenReallocate;
     return cast(typeof(return))wrenReallocate(vm, null, 0, T.sizeof);
@@ -2477,7 +2477,7 @@ T* ALLOCATE(T)(WrenVM* vm) @nogc
 
 // Use the VM's allocator to allocate an object of [mainType] containing a
 // flexible array of [count] objects of [arrayType].
-T* ALLOCATE_FLEX(T, ArrayType)(WrenVM* vm, size_t count) @nogc
+T* ALLOCATE_FLEX(T, ArrayType)(WrenVM* vm, size_t count)
 {
     import std.traits : isArray;
     import wren.vm : wrenReallocate;
@@ -2500,13 +2500,13 @@ T* ALLOCATE_FLEX(T, ArrayType)(WrenVM* vm, size_t count) @nogc
     return obj;
 }
 
-T* ALLOCATE_ARRAY(T)(WrenVM* vm, size_t count) @nogc
+T* ALLOCATE_ARRAY(T)(WrenVM* vm, size_t count)
 {
     import wren.vm : wrenReallocate;
     return cast(typeof(return))wrenReallocate(vm, null, 0, T.sizeof * count);
 }
 
-void DEALLOCATE(WrenVM* vm, void* pointer) @nogc
+void DEALLOCATE(WrenVM* vm, void* pointer)
 {
     import wren.vm : wrenReallocate;
     wrenReallocate(vm, pointer, 0, 0);

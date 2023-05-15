@@ -5,7 +5,7 @@ import wren.opcodes;
 import wren.value;
 import wren.vm;
 
-nothrow @nogc:
+
 
 void wrenDebugPrintStackTrace(WrenVM* vm)
 {

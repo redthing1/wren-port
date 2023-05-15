@@ -1,6 +1,6 @@
 module wren.common;
 
-nothrow @nogc:
+
 
 // The Wren semantic version number components.
 enum WREN_VERSION_MAJOR = 0;

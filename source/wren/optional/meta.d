@@ -7,7 +7,7 @@ static if (WREN_OPT_META):
 
 static immutable string metaModuleSource = import("optional/wren_opt_meta.wren");
 
-void metaCompile(WrenVM* vm) @nogc
+void metaCompile(WrenVM* vm)
 {
     const(char)* source = wrenGetSlotString(vm, 1);
     bool isExpression = wrenGetSlotBool(vm, 2);
@@ -37,7 +37,7 @@ void metaCompile(WrenVM* vm) @nogc
     }
 }
 
-void metaGetModuleVariables(WrenVM* vm) @nogc
+void metaGetModuleVariables(WrenVM* vm)
 {
     wrenEnsureSlots(vm, 3);
     
@@ -65,14 +65,14 @@ void metaGetModuleVariables(WrenVM* vm) @nogc
     }
 }
 
-const(char)[] wrenMetaSource() @nogc {
+const(char)[] wrenMetaSource() {
     return metaModuleSource;
 }
 
 WrenForeignMethodFn wrenMetaBindForeignMethod(WrenVM* vm,
                                               const(char)* className,
                                               bool isStatic,
-                                              const(char)* signature) @nogc
+                                              const(char)* signature)
 {
     import core.stdc.string : strcmp;
     // There is only one foreign method in the meta module.

@@ -4,20 +4,20 @@ import wren.primitive;
 import wren.value;
 import wren.vm;
 
-nothrow @nogc:
+
 
 // The core module source that is interpreted whenever core is initialized.
 static immutable string coreModuleSource = import("wren_core.wren");
 
 /++ Boolean primitives +/
 @WrenPrimitive("Bool", "!") 
-bool bool_not(WrenVM* vm, Value* args) @nogc
+bool bool_not(WrenVM* vm, Value* args)
 {
     return RETURN_BOOL(args, !AS_BOOL(args[0]));
 }
 
 @WrenPrimitive("Bool", "toString")
-bool bool_toString(WrenVM* vm, Value* args) @nogc
+bool bool_toString(WrenVM* vm, Value* args)
 {
     if (AS_BOOL(args[0]))
     {
@@ -31,13 +31,13 @@ bool bool_toString(WrenVM* vm, Value* args) @nogc
 
 /++ Class primitives +/
 @WrenPrimitive("Class", "name")
-bool class_name(WrenVM* vm, Value* args) @nogc
+bool class_name(WrenVM* vm, Value* args)
 {
     return RETURN_OBJ(args, AS_CLASS(args[0]).name);
 }
 
 @WrenPrimitive("Class", "supertype")
-bool class_supertype(WrenVM* vm, Value* args) @nogc
+bool class_supertype(WrenVM* vm, Value* args)
 {
     ObjClass* classObj = AS_CLASS(args[0]);
     
@@ -48,20 +48,20 @@ bool class_supertype(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Class", "toString")
-bool class_toString(WrenVM* vm, Value* args) @nogc
+bool class_toString(WrenVM* vm, Value* args)
 {
     return RETURN_OBJ(args, AS_CLASS(args[0]).name);
 }
 
 @WrenPrimitive("Class", "attributes")
-bool class_attributes(WrenVM* vm, Value* args) @nogc
+bool class_attributes(WrenVM* vm, Value* args)
 {
     return RETURN_VAL(args, AS_CLASS(args[0]).attributes);
 }
 
 /++ Fiber primitives +/
 @WrenPrimitive("Fiber", "new(_)", MethodType.METHOD_PRIMITIVE, true)
-bool fiber_new(WrenVM* vm, Value* args) @nogc
+bool fiber_new(WrenVM* vm, Value* args)
 {
     if (!validateFn(vm, args[1], "Argument")) return false;
 
@@ -75,7 +75,7 @@ bool fiber_new(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Fiber", "abort(_)", MethodType.METHOD_PRIMITIVE, true)
-bool fiber_abort(WrenVM* vm, Value* args) @nogc
+bool fiber_abort(WrenVM* vm, Value* args)
 {
     vm.fiber.error = args[1];
 
@@ -84,19 +84,19 @@ bool fiber_abort(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Fiber", "current", MethodType.METHOD_PRIMITIVE, true)
-bool fiber_current(WrenVM* vm, Value* args) @nogc
+bool fiber_current(WrenVM* vm, Value* args)
 {
     return RETURN_OBJ(args, vm.fiber);
 }
 
 @WrenPrimitive("Fiber", "suspend()", MethodType.METHOD_PRIMITIVE, true)
-bool fiber_suspend(WrenVM* vm, Value* args) @nogc
+bool fiber_suspend(WrenVM* vm, Value* args)
 {
     return RETURN_VAL(args, AS_FIBER(args[0]).error);
 }
 
 @WrenPrimitive("Fiber", "yield()", MethodType.METHOD_PRIMITIVE, true)
-bool fiber_yield(WrenVM* vm, Value* args) @nogc
+bool fiber_yield(WrenVM* vm, Value* args)
 {
     ObjFiber* current = vm.fiber;
     vm.fiber = current.caller;
@@ -115,7 +115,7 @@ bool fiber_yield(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Fiber", "yield(_)", MethodType.METHOD_PRIMITIVE, true)
-bool fiber_yield1(WrenVM* vm, Value* args) @nogc
+bool fiber_yield1(WrenVM* vm, Value* args)
 {
     ObjFiber* current = vm.fiber;
     vm.fiber = current.caller;
@@ -146,7 +146,7 @@ bool fiber_yield1(WrenVM* vm, Value* args) @nogc
 //
 // [hasValue] is true if a value in [args] is being passed to the new fiber.
 // Otherwise, `null` is implicitly being passed.
-bool runFiber(WrenVM* vm, ObjFiber* fiber, Value* args, bool isCall, bool hasValue, const(char)* verb) @nogc
+bool runFiber(WrenVM* vm, ObjFiber* fiber, Value* args, bool isCall, bool hasValue, const(char)* verb)
 {
     if (wrenHasError(fiber))
     {
@@ -199,44 +199,44 @@ bool runFiber(WrenVM* vm, ObjFiber* fiber, Value* args, bool isCall, bool hasVal
 }
 
 @WrenPrimitive("Fiber", "call()")
-bool fiber_call(WrenVM* vm, Value* args) @nogc
+bool fiber_call(WrenVM* vm, Value* args)
 {
     return runFiber(vm, AS_FIBER(args[0]), args, true, false, "call");
 }
 
 @WrenPrimitive("Fiber", "call(_)")
-bool fiber_call1(WrenVM* vm, Value* args) @nogc
+bool fiber_call1(WrenVM* vm, Value* args)
 {
     return runFiber(vm, AS_FIBER(args[0]), args, true, true, "call");
 }
 
 @WrenPrimitive("Fiber", "error")
-bool fiber_error(WrenVM* vm, Value* args) @nogc
+bool fiber_error(WrenVM* vm, Value* args)
 {
     return RETURN_VAL(args, AS_FIBER(args[0]).error);
 }
 
 @WrenPrimitive("Fiber", "isDone")
-bool fiber_isDone(WrenVM* vm, Value* args) @nogc
+bool fiber_isDone(WrenVM* vm, Value* args)
 {
     ObjFiber* runFiber = AS_FIBER(args[0]);
     return RETURN_BOOL(args, runFiber.numFrames == 0 || wrenHasError(runFiber));
 }
 
 @WrenPrimitive("Fiber", "transfer()")
-bool fiber_transfer(WrenVM* vm, Value* args) @nogc
+bool fiber_transfer(WrenVM* vm, Value* args)
 {
     return runFiber(vm, AS_FIBER(args[0]), args, false, false, "transfer to");
 }
 
 @WrenPrimitive("Fiber", "transfer(_)")
-bool fiber_transfer1(WrenVM* vm, Value* args) @nogc
+bool fiber_transfer1(WrenVM* vm, Value* args)
 {
     return runFiber(vm, AS_FIBER(args[0]), args, false, true, "transfer to");
 }
 
 @WrenPrimitive("Fiber", "transferError(_)")
-bool fiber_transferError(WrenVM* vm, Value* args) @nogc
+bool fiber_transferError(WrenVM* vm, Value* args)
 {
     runFiber(vm, AS_FIBER(args[0]), args, false, true, "transfer to");
     vm.fiber.error = args[1];
@@ -244,7 +244,7 @@ bool fiber_transferError(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Fiber", "try()")
-bool fiber_try(WrenVM* vm, Value* args) @nogc
+bool fiber_try(WrenVM* vm, Value* args)
 {
     runFiber(vm, AS_FIBER(args[0]), args, true, false, "try");
 
@@ -254,7 +254,7 @@ bool fiber_try(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Fiber", "try(_)")
-bool fiber_try1(WrenVM* vm, Value* args) @nogc
+bool fiber_try1(WrenVM* vm, Value* args)
 {
     runFiber(vm, AS_FIBER(args[0]), args, true, true, "try");
 
@@ -266,7 +266,7 @@ bool fiber_try1(WrenVM* vm, Value* args) @nogc
 /++ Fn primitives +/
 
 @WrenPrimitive("Fn", "new(_)", MethodType.METHOD_PRIMITIVE, true)
-bool fn_new(WrenVM* vm, Value* args) @nogc
+bool fn_new(WrenVM* vm, Value* args)
 {
     if (!validateFn(vm, args[1], "Argument")) return false;
 
@@ -275,19 +275,19 @@ bool fn_new(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Fn", "arity")
-bool fn_arity(WrenVM* vm, Value* args) @nogc
+bool fn_arity(WrenVM* vm, Value* args)
 {
     return RETURN_NUM(args, AS_CLOSURE(args[0]).fn.arity);
 }
 
-void call_fn(WrenVM* vm, Value* args, int numArgs) @nogc
+void call_fn(WrenVM* vm, Value* args, int numArgs)
 {
     // +1 to include the function itself.
     wrenCallFunction(vm, vm.fiber, AS_CLOSURE(args[0]), numArgs + 1);
 }
 
 @WrenPrimitive("Fn", "call()", MethodType.METHOD_FUNCTION_CALL)
-bool fn_call0(WrenVM* vm, Value* args) @nogc
+bool fn_call0(WrenVM* vm, Value* args)
 {
     call_fn(vm, args, 0);
     return false;
@@ -296,126 +296,126 @@ bool fn_call0(WrenVM* vm, Value* args) @nogc
 // Note: all these call(_) function were a string mixin, but this would make 120 template instantiations.
 
 @WrenPrimitive("Fn", "call(_)", MethodType.METHOD_FUNCTION_CALL)
-bool fn_call1(WrenVM* vm, Value* args) @nogc
+bool fn_call1(WrenVM* vm, Value* args)
 {
     call_fn(vm, args, 1);
     return false;
 }
 
 @WrenPrimitive("Fn", "call(_,_)", MethodType.METHOD_FUNCTION_CALL)
-bool fn_call2(WrenVM* vm, Value* args) @nogc
+bool fn_call2(WrenVM* vm, Value* args)
 {
     call_fn(vm, args, 2);
     return false;
 }
 
 @WrenPrimitive("Fn", "call(_,_,_)", MethodType.METHOD_FUNCTION_CALL)
-bool fn_call3(WrenVM* vm, Value* args) @nogc
+bool fn_call3(WrenVM* vm, Value* args)
 {
     call_fn(vm, args, 3);
     return false;
 }
 
 @WrenPrimitive("Fn", "call(_,_,_,_)", MethodType.METHOD_FUNCTION_CALL)
-bool fn_call4(WrenVM* vm, Value* args) @nogc
+bool fn_call4(WrenVM* vm, Value* args)
 {
     call_fn(vm, args, 4);
     return false;
 }
 
 @WrenPrimitive("Fn", "call(_,_,_,_,_)", MethodType.METHOD_FUNCTION_CALL)
-bool fn_call5(WrenVM* vm, Value* args) @nogc
+bool fn_call5(WrenVM* vm, Value* args)
 {
     call_fn(vm, args, 5);
     return false;
 }
 
 @WrenPrimitive("Fn", "call(_,_,_,_,_,_)", MethodType.METHOD_FUNCTION_CALL)
-bool fn_call6(WrenVM* vm, Value* args) @nogc
+bool fn_call6(WrenVM* vm, Value* args)
 {
     call_fn(vm, args, 6);
     return false;
 }
 
 @WrenPrimitive("Fn", "call(_,_,_,_,_,_,_)", MethodType.METHOD_FUNCTION_CALL)
-bool fn_call7(WrenVM* vm, Value* args) @nogc
+bool fn_call7(WrenVM* vm, Value* args)
 {
     call_fn(vm, args, 7);
     return false;
 }
 
 @WrenPrimitive("Fn", "call(_,_,_,_,_,_,_,_)", MethodType.METHOD_FUNCTION_CALL)
-bool fn_call8(WrenVM* vm, Value* args) @nogc
+bool fn_call8(WrenVM* vm, Value* args)
 {
     call_fn(vm, args, 8);
     return false;
 }
 
 @WrenPrimitive("Fn", "call(_,_,_,_,_,_,_,_,_)", MethodType.METHOD_FUNCTION_CALL)
-bool fn_call9(WrenVM* vm, Value* args) @nogc
+bool fn_call9(WrenVM* vm, Value* args)
 {
     call_fn(vm, args, 9);
     return false;
 }
 
 @WrenPrimitive("Fn", "call(_,_,_,_,_,_,_,_,_,_)", MethodType.METHOD_FUNCTION_CALL)
-bool fn_call10(WrenVM* vm, Value* args) @nogc
+bool fn_call10(WrenVM* vm, Value* args)
 {
     call_fn(vm, args, 10);
     return false;
 }
 
 @WrenPrimitive("Fn", "call(_,_,_,_,_,_,_,_,_,_,_)", MethodType.METHOD_FUNCTION_CALL)
-bool fn_call11(WrenVM* vm, Value* args) @nogc
+bool fn_call11(WrenVM* vm, Value* args)
 {
     call_fn(vm, args, 11);
     return false;
 }
 
 @WrenPrimitive("Fn", "call(_,_,_,_,_,_,_,_,_,_,_,_)", MethodType.METHOD_FUNCTION_CALL)
-bool fn_call12(WrenVM* vm, Value* args) @nogc
+bool fn_call12(WrenVM* vm, Value* args)
 {
     call_fn(vm, args, 12);
     return false;
 }
 
 @WrenPrimitive("Fn", "call(_,_,_,_,_,_,_,_,_,_,_,_,_)", MethodType.METHOD_FUNCTION_CALL)
-bool fn_call13(WrenVM* vm, Value* args) @nogc
+bool fn_call13(WrenVM* vm, Value* args)
 {
     call_fn(vm, args, 13);
     return false;
 }
 
 @WrenPrimitive("Fn", "call(_,_,_,_,_,_,_,_,_,_,_,_,_,_)", MethodType.METHOD_FUNCTION_CALL)
-bool fn_call14(WrenVM* vm, Value* args) @nogc
+bool fn_call14(WrenVM* vm, Value* args)
 {
     call_fn(vm, args, 14);
     return false;
 }
 
 @WrenPrimitive("Fn", "call(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_)", MethodType.METHOD_FUNCTION_CALL)
-bool fn_call15(WrenVM* vm, Value* args) @nogc
+bool fn_call15(WrenVM* vm, Value* args)
 {
     call_fn(vm, args, 15);
     return false;
 }
 
 @WrenPrimitive("Fn", "call(_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_)", MethodType.METHOD_FUNCTION_CALL)
-bool fn_call16(WrenVM* vm, Value* args) @nogc
+bool fn_call16(WrenVM* vm, Value* args)
 {
     call_fn(vm, args, 16);
     return false;
 }
 
 @WrenPrimitive("Fn", "toString")
-bool fn_toString(WrenVM* vm, Value* args) @nogc
+bool fn_toString(WrenVM* vm, Value* args)
 {
     return RETURN_VAL(args, CONST_STRING(vm, "<fn>"));
 }
 
 /++ List primitives +/
 @WrenPrimitive("List", "filled(_,_)", MethodType.METHOD_PRIMITIVE, true)
-bool list_filled(WrenVM* vm, Value* args) @nogc
+bool list_filled(WrenVM* vm, Value* args)
 {
     if (!validateInt(vm, args[1], "Size")) return false;
     if (AS_NUM(args[1]) < 0) return RETURN_ERROR(vm, "Size cannot be negative.");
@@ -432,13 +432,13 @@ bool list_filled(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("List", "new()", MethodType.METHOD_PRIMITIVE, true)
-bool list_new(WrenVM* vm, Value* args) @nogc
+bool list_new(WrenVM* vm, Value* args)
 {
     return RETURN_OBJ(args, wrenNewList(vm, 0));
 }
 
 @WrenPrimitive("List", "[_]")
-bool list_subscript(WrenVM* vm, Value* args) @nogc
+bool list_subscript(WrenVM* vm, Value* args)
 {
     ObjList* list = AS_LIST(args[0]);
 
@@ -471,7 +471,7 @@ bool list_subscript(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("List", "[_]=(_)")
-bool list_subscriptSetter(WrenVM* vm, Value* args) @nogc
+bool list_subscriptSetter(WrenVM* vm, Value* args)
 {
     ObjList* list = AS_LIST(args[0]);
     uint index = validateIndex(vm, args[1], list.elements.count,
@@ -483,7 +483,7 @@ bool list_subscriptSetter(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("List", "add(_)")
-bool list_add(WrenVM* vm, Value* args) @nogc
+bool list_add(WrenVM* vm, Value* args)
 {
     wrenValueBufferWrite(vm, &AS_LIST(args[0]).elements, args[1]);
     return RETURN_VAL(args, args[1]);
@@ -493,7 +493,7 @@ bool list_add(WrenVM* vm, Value* args) @nogc
 // by the compiler when compiling list literals instead of using add() to
 // minimize stack churn.
 @WrenPrimitive("List", "addCore_(_)")
-bool list_addCore(WrenVM* vm, Value* args) @nogc
+bool list_addCore(WrenVM* vm, Value* args)
 {
     wrenValueBufferWrite(vm, &AS_LIST(args[0]).elements, args[1]);
 
@@ -502,20 +502,20 @@ bool list_addCore(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("List", "clear()")
-bool list_clear(WrenVM* vm, Value* args) @nogc
+bool list_clear(WrenVM* vm, Value* args)
 {
     wrenValueBufferClear(vm, &AS_LIST(args[0]).elements);
     return RETURN_NULL(args);
 }
 
 @WrenPrimitive("List", "count")
-bool list_count(WrenVM* vm, Value* args) @nogc
+bool list_count(WrenVM* vm, Value* args)
 {
     return RETURN_NUM(args, AS_LIST(args[0]).elements.count);
 }
 
 @WrenPrimitive("List", "insert(_,_)")
-bool list_insert(WrenVM* vm, Value* args) @nogc
+bool list_insert(WrenVM* vm, Value* args)
 {
     ObjList* list = AS_LIST(args[0]);
 
@@ -528,7 +528,7 @@ bool list_insert(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("List", "iterate(_)")
-bool list_iterate(WrenVM* vm, Value* args) @nogc
+bool list_iterate(WrenVM* vm, Value* args)
 {
     ObjList* list = AS_LIST(args[0]);
 
@@ -550,7 +550,7 @@ bool list_iterate(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("List", "iteratorValue(_)")
-bool list_iteratorValue(WrenVM* vm, Value* args) @nogc
+bool list_iteratorValue(WrenVM* vm, Value* args)
 {
     ObjList* list = AS_LIST(args[0]);
     uint index = validateIndex(vm, args[1], list.elements.count, "Iterator");
@@ -560,7 +560,7 @@ bool list_iteratorValue(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("List", "removeAt(_)")
-bool list_removeAt(WrenVM* vm, Value* args) @nogc
+bool list_removeAt(WrenVM* vm, Value* args)
 {
     ObjList* list = AS_LIST(args[0]);
     uint index = validateIndex(vm, args[1], list.elements.count, "Index");
@@ -570,7 +570,7 @@ bool list_removeAt(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("List", "remove(_)")
-bool list_removeValue(WrenVM* vm, Value* args) @nogc
+bool list_removeValue(WrenVM* vm, Value* args)
 {
     ObjList* list = AS_LIST(args[0]);
     int index = wrenListIndexOf(vm, list, args[1]);
@@ -579,14 +579,14 @@ bool list_removeValue(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("List", "indexOf(_)")
-bool list_indexOf(WrenVM* vm, Value* args) @nogc
+bool list_indexOf(WrenVM* vm, Value* args)
 {
     ObjList* list = AS_LIST(args[0]);
     return RETURN_NUM(args, wrenListIndexOf(vm, list, args[1]));
 }
 
 @WrenPrimitive("List", "swap(_,_)")
-bool list_swap(WrenVM* vm, Value* args) @nogc
+bool list_swap(WrenVM* vm, Value* args)
 {
     ObjList* list = AS_LIST(args[0]);
     uint indexA = validateIndex(vm, args[1], list.elements.count, "Index 0");
@@ -602,13 +602,13 @@ bool list_swap(WrenVM* vm, Value* args) @nogc
 }
 /++ Null primitives +/
 @WrenPrimitive("Null", "!")
-bool null_not(WrenVM* vm, Value* args) @nogc
+bool null_not(WrenVM* vm, Value* args)
 {
     return RETURN_VAL(args, TRUE_VAL);
 }
 
 @WrenPrimitive("Null", "toString")
-bool null_toString(WrenVM* vm, Value* args) @nogc
+bool null_toString(WrenVM* vm, Value* args)
 {
     return RETURN_VAL(args, CONST_STRING(vm, "null"));
 }
@@ -617,111 +617,111 @@ bool null_toString(WrenVM* vm, Value* args) @nogc
 
 // Porting over macros is always a joy.
 @WrenPrimitive("Num", "infinity", MethodType.METHOD_PRIMITIVE, true)
-bool num_infinity(WrenVM* vm, Value* args) @nogc
+bool num_infinity(WrenVM* vm, Value* args)
 {
     return RETURN_NUM(args, double.infinity);
 }
 
 @WrenPrimitive("Num", "nan", MethodType.METHOD_PRIMITIVE, true)
-bool num_nan(WrenVM* vm, Value* args) @nogc
+bool num_nan(WrenVM* vm, Value* args)
 {
     return RETURN_NUM(args, WREN_DOUBLE_NAN);
 }
 
 @WrenPrimitive("Num", "pi", MethodType.METHOD_PRIMITIVE, true)
-bool num_pi(WrenVM* vm, Value* args) @nogc
+bool num_pi(WrenVM* vm, Value* args)
 {
     return RETURN_NUM(args, 3.14159265358979323846264338327950288);
 }
 
 @WrenPrimitive("Num", "tau", MethodType.METHOD_PRIMITIVE, true)
-bool num_tau(WrenVM* vm, Value* args) @nogc
+bool num_tau(WrenVM* vm, Value* args)
 {
     return RETURN_NUM(args, 6.28318530717958647692528676655900577);
 }
 
 @WrenPrimitive("Num", "largest", MethodType.METHOD_PRIMITIVE, true)
-bool num_largest(WrenVM* vm, Value* args) @nogc
+bool num_largest(WrenVM* vm, Value* args)
 {
     return RETURN_NUM(args, double.max);
 }
 
 @WrenPrimitive("Num", "smallest", MethodType.METHOD_PRIMITIVE, true)
-bool num_smallest(WrenVM* vm, Value* args) @nogc
+bool num_smallest(WrenVM* vm, Value* args)
 {
     return RETURN_NUM(args, double.min_normal);
 }
 
 @WrenPrimitive("Num", "maxSafeInteger", MethodType.METHOD_PRIMITIVE, true)
-bool num_maxSafeInteger(WrenVM* vm, Value* args) @nogc
+bool num_maxSafeInteger(WrenVM* vm, Value* args)
 {
     return RETURN_NUM(args, 9007199254740991.0);
 }
 
 @WrenPrimitive("Num", "minSafeInteger", MethodType.METHOD_PRIMITIVE, true)
-bool num_minSafeInteger(WrenVM* vm, Value* args) @nogc
+bool num_minSafeInteger(WrenVM* vm, Value* args)
 {
     return RETURN_NUM(args, -9007199254740991.0);
 }
 
 @WrenPrimitive("Num", "-(_)")
-bool num_minus(WrenVM* vm, Value* args) @nogc
+bool num_minus(WrenVM* vm, Value* args)
 {
     if (!validateNum(vm, args[1], "Right operand")) return false;
     return RETURN_NUM(args, AS_NUM(args[0]) - AS_NUM(args[1]));
 }
 
 @WrenPrimitive("Num", "+(_)")
-bool num_plus(WrenVM* vm, Value* args) @nogc
+bool num_plus(WrenVM* vm, Value* args)
 {
     if (!validateNum(vm, args[1], "Right operand")) return false;
     return RETURN_NUM(args, AS_NUM(args[0]) + AS_NUM(args[1]));
 }
 
 @WrenPrimitive("Num", "*(_)")
-bool num_multiply(WrenVM* vm, Value* args) @nogc
+bool num_multiply(WrenVM* vm, Value* args)
 {
     if (!validateNum(vm, args[1], "Right operand")) return false;
     return RETURN_NUM(args, AS_NUM(args[0]) * AS_NUM(args[1]));
 }
 
 @WrenPrimitive("Num", "/(_)")
-bool num_divide(WrenVM* vm, Value* args) @nogc
+bool num_divide(WrenVM* vm, Value* args)
 {
     if (!validateNum(vm, args[1], "Right operand")) return false;
     return RETURN_NUM(args, AS_NUM(args[0]) / AS_NUM(args[1]));
 }
 
 @WrenPrimitive("Num", "<(_)")
-bool num_lt(WrenVM* vm, Value* args) @nogc
+bool num_lt(WrenVM* vm, Value* args)
 {
     if (!validateNum(vm, args[1], "Right operand")) return false;
     return RETURN_BOOL(args, AS_NUM(args[0]) < AS_NUM(args[1]));
 }
 
 @WrenPrimitive("Num", ">(_)")
-bool num_gt(WrenVM* vm, Value* args) @nogc
+bool num_gt(WrenVM* vm, Value* args)
 {
     if (!validateNum(vm, args[1], "Right operand")) return false;
     return RETURN_BOOL(args, AS_NUM(args[0]) > AS_NUM(args[1]));
 }
 
 @WrenPrimitive("Num", "<=(_)")
-bool num_lte(WrenVM* vm, Value* args) @nogc
+bool num_lte(WrenVM* vm, Value* args)
 {
     if (!validateNum(vm, args[1], "Right operand")) return false;
     return RETURN_BOOL(args, AS_NUM(args[0]) <= AS_NUM(args[1]));
 }
 
 @WrenPrimitive("Num", ">=(_)")
-bool num_gte(WrenVM* vm, Value* args) @nogc
+bool num_gte(WrenVM* vm, Value* args)
 {
     if (!validateNum(vm, args[1], "Right operand")) return false;
     return RETURN_BOOL(args, AS_NUM(args[0]) >= AS_NUM(args[1]));
 }
 
 @WrenPrimitive("Num", "&(_)")
-bool num_bitwiseAnd(WrenVM* vm, Value* args) @nogc
+bool num_bitwiseAnd(WrenVM* vm, Value* args)
 {
     if (!validateNum(vm, args[1], "Right operand")) return false;
     uint left = cast(uint)AS_NUM(args[0]);
@@ -730,7 +730,7 @@ bool num_bitwiseAnd(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Num", "|(_)")
-bool num_bitwiseOr(WrenVM* vm, Value* args) @nogc
+bool num_bitwiseOr(WrenVM* vm, Value* args)
 {
     if (!validateNum(vm, args[1], "Right operand")) return false;
     uint left = cast(uint)AS_NUM(args[0]);
@@ -739,7 +739,7 @@ bool num_bitwiseOr(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Num", "^(_)")
-bool num_bitwiseXor(WrenVM* vm, Value* args) @nogc
+bool num_bitwiseXor(WrenVM* vm, Value* args)
 {
     if (!validateNum(vm, args[1], "Right operand")) return false;
     uint left = cast(uint)AS_NUM(args[0]);
@@ -748,7 +748,7 @@ bool num_bitwiseXor(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Num", "<<(_)")
-bool num_bitwiseLeftShift(WrenVM* vm, Value* args) @nogc
+bool num_bitwiseLeftShift(WrenVM* vm, Value* args)
 {
     if (!validateNum(vm, args[1], "Right operand")) return false;
     uint left = cast(uint)AS_NUM(args[0]);
@@ -757,7 +757,7 @@ bool num_bitwiseLeftShift(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Num", ">>(_)")
-bool num_bitwiseRightShift(WrenVM* vm, Value* args) @nogc
+bool num_bitwiseRightShift(WrenVM* vm, Value* args)
 {
     if (!validateNum(vm, args[1], "Right operand")) return false;
     uint left = cast(uint)AS_NUM(args[0]);
@@ -768,118 +768,118 @@ bool num_bitwiseRightShift(WrenVM* vm, Value* args) @nogc
 // Numeric functions
 
 @WrenPrimitive("Num", "abs")
-bool num_abs(WrenVM* vm, Value* args) @nogc
+bool num_abs(WrenVM* vm, Value* args)
 {
     import core.stdc.math : fabs;
     return RETURN_NUM(args, fabs(AS_NUM(args[0])));
 }
 
 @WrenPrimitive("Num", "acos")
-bool num_acos(WrenVM* vm, Value* args) @nogc
+bool num_acos(WrenVM* vm, Value* args)
 {
     import core.stdc.math : acos;
     return RETURN_NUM(args, acos(AS_NUM(args[0])));
 }
 
 @WrenPrimitive("Num", "asin")
-bool num_asin(WrenVM* vm, Value* args) @nogc
+bool num_asin(WrenVM* vm, Value* args)
 {
     import core.stdc.math : asin;
     return RETURN_NUM(args, asin(AS_NUM(args[0])));
 }
 
 @WrenPrimitive("Num", "atan")
-bool num_atan(WrenVM* vm, Value* args) @nogc
+bool num_atan(WrenVM* vm, Value* args)
 {
     import core.stdc.math : atan;
     return RETURN_NUM(args, atan(AS_NUM(args[0])));
 }
 
 @WrenPrimitive("Num", "cbrt")
-bool num_cbrt(WrenVM* vm, Value* args) @nogc
+bool num_cbrt(WrenVM* vm, Value* args)
 {
     import core.stdc.math : cbrt;
     return RETURN_NUM(args, cbrt(AS_NUM(args[0])));
 }
 
 @WrenPrimitive("Num", "ceil")
-bool num_ceil(WrenVM* vm, Value* args) @nogc
+bool num_ceil(WrenVM* vm, Value* args)
 {
     import core.stdc.math : ceil;
     return RETURN_NUM(args, ceil(AS_NUM(args[0])));
 }
 
 @WrenPrimitive("Num", "cos")
-bool num_cos(WrenVM* vm, Value* args) @nogc
+bool num_cos(WrenVM* vm, Value* args)
 {
     import core.stdc.math : cos;
     return RETURN_NUM(args, cos(AS_NUM(args[0])));
 }
 
 @WrenPrimitive("Num", "floor")
-bool num_floor(WrenVM* vm, Value* args) @nogc
+bool num_floor(WrenVM* vm, Value* args)
 {
     import core.stdc.math : floor;
     return RETURN_NUM(args, floor(AS_NUM(args[0])));
 }
 
 @WrenPrimitive("Num", "round")
-bool num_round(WrenVM* vm, Value* args) @nogc
+bool num_round(WrenVM* vm, Value* args)
 {
     import core.stdc.math : round;
     return RETURN_NUM(args, round(AS_NUM(args[0])));
 }
 
 @WrenPrimitive("Num", "sin")
-bool num_sin(WrenVM* vm, Value* args) @nogc
+bool num_sin(WrenVM* vm, Value* args)
 {
     import core.stdc.math : sin;
     return RETURN_NUM(args, sin(AS_NUM(args[0])));
 }
 
 @WrenPrimitive("Num", "sqrt")
-bool num_sqrt(WrenVM* vm, Value* args) @nogc
+bool num_sqrt(WrenVM* vm, Value* args)
 {
     import core.stdc.math : sqrt;
     return RETURN_NUM(args, sqrt(AS_NUM(args[0])));
 }
 
 @WrenPrimitive("Num", "tan")
-bool num_tan(WrenVM* vm, Value* args) @nogc
+bool num_tan(WrenVM* vm, Value* args)
 {
     import core.stdc.math : tan;
     return RETURN_NUM(args, tan(AS_NUM(args[0])));
 }
 
 @WrenPrimitive("Num", "log")
-bool num_log(WrenVM* vm, Value* args) @nogc
+bool num_log(WrenVM* vm, Value* args)
 {
     import core.stdc.math : log;
     return RETURN_NUM(args, log(AS_NUM(args[0])));
 }
 
 @WrenPrimitive("Num", "log2")
-bool num_log2(WrenVM* vm, Value* args) @nogc
+bool num_log2(WrenVM* vm, Value* args)
 {
     import core.stdc.math : log2;
     return RETURN_NUM(args, log2(AS_NUM(args[0])));
 }
 
 @WrenPrimitive("Num", "exp")
-bool num_exp(WrenVM* vm, Value* args) @nogc
+bool num_exp(WrenVM* vm, Value* args)
 {
     import core.stdc.math : exp;
     return RETURN_NUM(args, exp(AS_NUM(args[0])));
 }
 
 @WrenPrimitive("Num", "-")
-bool num_negate(WrenVM* vm, Value* args) @nogc
+bool num_negate(WrenVM* vm, Value* args)
 {
     return RETURN_NUM(args, -AS_NUM(args[0]));
 }
 
 @WrenPrimitive("Num", "%(_)")
-bool num_mod(WrenVM* vm, Value* args) @nogc
+bool num_mod(WrenVM* vm, Value* args)
 {
     import core.stdc.math : fmod;
     if (!validateNum(vm, args[1], "Right operand")) return false;
@@ -887,28 +887,28 @@ bool num_mod(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Num", "==(_)")
-bool num_eqeq(WrenVM* vm, Value* args) @nogc
+bool num_eqeq(WrenVM* vm, Value* args)
 {
     if (!IS_NUM(args[1])) return RETURN_FALSE(args);
     return RETURN_BOOL(args, AS_NUM(args[0]) == AS_NUM(args[1]));
 }
 
 @WrenPrimitive("Num", "!=(_)")
-bool num_bangeq(WrenVM* vm, Value* args) @nogc
+bool num_bangeq(WrenVM* vm, Value* args)
 {
     if (!IS_NUM(args[1])) return RETURN_TRUE(args);
     return RETURN_BOOL(args, AS_NUM(args[0]) != AS_NUM(args[1]));
 }
 
 @WrenPrimitive("Num", "~")
-bool num_bitwiseNot(WrenVM* vm, Value* args) @nogc
+bool num_bitwiseNot(WrenVM* vm, Value* args)
 {
     // Bitwise operators always work on 32-bit unsigned ints.
     return RETURN_NUM(args, ~cast(uint)(AS_NUM(args[0])));
 }
 
 @WrenPrimitive("Num", "..(_)")
-bool num_dotDot(WrenVM* vm, Value* args) @nogc
+bool num_dotDot(WrenVM* vm, Value* args)
 {
     if (!validateNum(vm, args[1], "Right hand side of range")) return false;
 
@@ -918,7 +918,7 @@ bool num_dotDot(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Num", "...(_)")
-bool num_dotDotDot(WrenVM* vm, Value* args) @nogc
+bool num_dotDotDot(WrenVM* vm, Value* args)
 {
     if (!validateNum(vm, args[1], "Right hand side of range")) return false;
 
@@ -928,7 +928,7 @@ bool num_dotDotDot(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Num", "atan2(_)")
-bool num_atan2(WrenVM* vm, Value* args) @nogc
+bool num_atan2(WrenVM* vm, Value* args)
 {
     import core.stdc.math : atan2;
     if (!validateNum(vm, args[1], "x value")) return false;
@@ -937,7 +937,7 @@ bool num_atan2(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Num", "min(_)")
-bool num_min(WrenVM* vm, Value* args) @nogc
+bool num_min(WrenVM* vm, Value* args)
 {
     if (!validateNum(vm, args[1], "Other value")) return false;
 
@@ -947,7 +947,7 @@ bool num_min(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Num", "max(_)")
-bool num_max(WrenVM* vm, Value* args) @nogc
+bool num_max(WrenVM* vm, Value* args)
 {
     if (!validateNum(vm, args[1], "Other value")) return false;
 
@@ -957,7 +957,7 @@ bool num_max(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Num", "clamp(_,_)")
-bool num_clamp(WrenVM* vm, Value* args) @nogc
+bool num_clamp(WrenVM* vm, Value* args)
 {
     if (!validateNum(vm, args[1], "Min value")) return false;
     if (!validateNum(vm, args[2], "Max value")) return false;
@@ -970,7 +970,7 @@ bool num_clamp(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Num", "pow(_)")
-bool num_pow(WrenVM* vm, Value* args) @nogc
+bool num_pow(WrenVM* vm, Value* args)
 {
     import core.stdc.math : pow;
     if (!validateNum(vm, args[1], "Power value")) return false;
@@ -979,7 +979,7 @@ bool num_pow(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Num", "fraction")
-bool num_fraction(WrenVM* vm, Value* args) @nogc
+bool num_fraction(WrenVM* vm, Value* args)
 {
     import core.stdc.math : modf;
 
@@ -988,21 +988,21 @@ bool num_fraction(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Num", "isInfinity")
-bool num_isInfinity(WrenVM* vm, Value* args) @nogc
+bool num_isInfinity(WrenVM* vm, Value* args)
 {
     import core.stdc.math : isinf;
     return RETURN_BOOL(args, isinf(AS_NUM(args[0])) == 1);
 }
 
 @WrenPrimitive("Num", "isNan")
-bool num_isNan(WrenVM* vm, Value* args) @nogc
+bool num_isNan(WrenVM* vm, Value* args)
 {
     import core.stdc.math : isnan;
     return RETURN_BOOL(args, isnan(AS_NUM(args[0])) == 1);
 }
 
 @WrenPrimitive("Num", "sign")
-bool num_sign(WrenVM* vm, Value* args) @nogc
+bool num_sign(WrenVM* vm, Value* args)
 {
     double value = AS_NUM(args[0]);
     if (value > 0) 
@@ -1020,13 +1020,13 @@ bool num_sign(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Num", "toString")
-bool num_toString(WrenVM* vm, Value* args) @nogc
+bool num_toString(WrenVM* vm, Value* args)
 {
     return RETURN_VAL(args, wrenNumToString(vm, AS_NUM(args[0])));   
 }
 
 @WrenPrimitive("Num", "truncate")
-bool num_truncate(WrenVM* vm, Value* args) @nogc
+bool num_truncate(WrenVM* vm, Value* args)
 {
     import core.stdc.math : modf;
     double integer;
@@ -1036,31 +1036,31 @@ bool num_truncate(WrenVM* vm, Value* args) @nogc
 
 /++ Object primitives +/
 @WrenPrimitive("Object metaclass", "same(_,_)")
-bool object_same(WrenVM* vm, Value* args) @nogc
+bool object_same(WrenVM* vm, Value* args)
 {
     return RETURN_BOOL(args, wrenValuesEqual(args[1], args[2]));
 }
 
 @WrenPrimitive("Object", "!")
-bool object_not(WrenVM* vm, Value* args) @nogc
+bool object_not(WrenVM* vm, Value* args)
 {
     return RETURN_VAL(args, FALSE_VAL);
 }
 
 @WrenPrimitive("Object", "==(_)")
-bool object_eqeq(WrenVM* vm, Value* args) @nogc
+bool object_eqeq(WrenVM* vm, Value* args)
 {
     return RETURN_BOOL(args, wrenValuesEqual(args[0], args[1]));
 }
 
 @WrenPrimitive("Object", "!=(_)")
-bool object_bangeq(WrenVM* vm, Value* args) @nogc
+bool object_bangeq(WrenVM* vm, Value* args)
 {
     return RETURN_BOOL(args, !wrenValuesEqual(args[0], args[1]));
 }
 
 @WrenPrimitive("Object", "is(_)")
-bool object_is(WrenVM* vm, Value* args) @nogc
+bool object_is(WrenVM* vm, Value* args)
 {
     if (!IS_CLASS(args[1]))
     {
@@ -1085,7 +1085,7 @@ bool object_is(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Object", "toString")
-bool object_toString(WrenVM* vm, Value* args) @nogc
+bool object_toString(WrenVM* vm, Value* args)
 {
     Obj* obj = AS_OBJ(args[0]);
     Value name = OBJ_VAL(obj.classObj.name);
@@ -1093,7 +1093,7 @@ bool object_toString(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Object", "type")
-bool object_type(WrenVM* vm, Value* args) @nogc
+bool object_type(WrenVM* vm, Value* args)
 {
     return RETURN_OBJ(args, wrenGetClass(vm, args[0]));
 }
@@ -1101,19 +1101,19 @@ bool object_type(WrenVM* vm, Value* args) @nogc
 /++ Range primitives +/
 
 @WrenPrimitive("Range", "from")
-bool range_from(WrenVM* vm, Value* args) @nogc
+bool range_from(WrenVM* vm, Value* args)
 {
     return RETURN_NUM(args, AS_RANGE(args[0]).from);
 }
 
 @WrenPrimitive("Range", "to")
-bool range_to(WrenVM* vm, Value* args) @nogc
+bool range_to(WrenVM* vm, Value* args)
 {
     return RETURN_NUM(args, AS_RANGE(args[0]).to);
 }
 
 @WrenPrimitive("Range", "min")
-bool range_min(WrenVM* vm, Value* args) @nogc
+bool range_min(WrenVM* vm, Value* args)
 {
     import core.stdc.math : fmin;
     ObjRange* range = AS_RANGE(args[0]);
@@ -1121,7 +1121,7 @@ bool range_min(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Range", "max")
-bool range_max(WrenVM* vm, Value* args) @nogc
+bool range_max(WrenVM* vm, Value* args)
 {
     import core.stdc.math : fmax;
     ObjRange* range = AS_RANGE(args[0]);
@@ -1129,13 +1129,13 @@ bool range_max(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Range", "isInclusive")
-bool range_isInclusive(WrenVM* vm, Value* args) @nogc
+bool range_isInclusive(WrenVM* vm, Value* args)
 {
     return RETURN_BOOL(args, AS_RANGE(args[0]).isInclusive);
 }
 
 @WrenPrimitive("Range", "iterate(_)")
-bool range_iterate(WrenVM* vm, Value* args) @nogc
+bool range_iterate(WrenVM* vm, Value* args)
 {
     ObjRange* range = AS_RANGE(args[0]);
 
@@ -1167,14 +1167,14 @@ bool range_iterate(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("Range", "iteratorValue(_)")
-bool range_iteratorValue(WrenVM* vm, Value* args) @nogc
+bool range_iteratorValue(WrenVM* vm, Value* args)
 {
     // Assume the iterator is a number so that is the value of the range.
     return RETURN_VAL(args, args[1]);
 }
 
 @WrenPrimitive("Range", "toString")
-bool range_toString(WrenVM* vm, Value* args) @nogc
+bool range_toString(WrenVM* vm, Value* args)
 {
     ObjRange* range = AS_RANGE(args[0]);
 
@@ -1195,7 +1195,7 @@ bool range_toString(WrenVM* vm, Value* args) @nogc
 /++ String primitives +/
 
 @WrenPrimitive("String", "fromCodePoint(_)", MethodType.METHOD_PRIMITIVE, true)
-bool string_fromCodePoint(WrenVM* vm, Value* args) @nogc
+bool string_fromCodePoint(WrenVM* vm, Value* args)
 {
     if (!validateInt(vm, args[1], "Code point")) return false;
 
@@ -1213,7 +1213,7 @@ bool string_fromCodePoint(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("String", "fromByte(_)", MethodType.METHOD_PRIMITIVE, true)
-bool string_fromByte(WrenVM* vm, Value* args) @nogc
+bool string_fromByte(WrenVM* vm, Value* args)
 {
     if (!validateInt(vm, args[1], "Byte")) return false;
     int byte_ = cast(int) AS_NUM(args[1]);
@@ -1229,7 +1229,7 @@ bool string_fromByte(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("String", "byteAt(_)")
-bool string_byteAt(WrenVM* vm, Value* args) @nogc
+bool string_byteAt(WrenVM* vm, Value* args)
 {
     ObjString* string_ = AS_STRING(args[0]);
 
@@ -1240,13 +1240,13 @@ bool string_byteAt(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("String", "byteCount")
-bool string_byteCount(WrenVM* vm, Value* args) @nogc
+bool string_byteCount(WrenVM* vm, Value* args)
 {
     return RETURN_NUM(args, AS_STRING(args[0]).length);
 }
 
 @WrenPrimitive("String", "codePointAt(_)")
-bool string_codePointAt(WrenVM* vm, Value* args) @nogc
+bool string_codePointAt(WrenVM* vm, Value* args)
 {
     import wren.utils : wrenUtf8Decode;
     ObjString* string_ = AS_STRING(args[0]);
@@ -1264,7 +1264,7 @@ bool string_codePointAt(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("String", "contains(_)")
-bool string_contains(WrenVM* vm, Value* args) @nogc
+bool string_contains(WrenVM* vm, Value* args)
 {
     if (!validateString(vm, args[1], "Argument")) return false;
 
@@ -1275,7 +1275,7 @@ bool string_contains(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("String", "endsWith(_)")
-bool string_endsWith(WrenVM* vm, Value* args) @nogc
+bool string_endsWith(WrenVM* vm, Value* args)
 {
     import core.stdc.string : memcmp;
     if (!validateString(vm, args[1], "Argument")) return false;
@@ -1291,7 +1291,7 @@ bool string_endsWith(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("String", "indexOf(_)")
-bool string_indexOf1(WrenVM* vm, Value* args) @nogc
+bool string_indexOf1(WrenVM* vm, Value* args)
 {
     if (!validateString(vm, args[1], "Argument")) return false;
 
@@ -1303,7 +1303,7 @@ bool string_indexOf1(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("String", "indexOf(_,_)")
-bool string_indexOf2(WrenVM* vm, Value* args) @nogc
+bool string_indexOf2(WrenVM* vm, Value* args)
 {
     if (!validateString(vm, args[1], "Argument")) return false;
 
@@ -1317,7 +1317,7 @@ bool string_indexOf2(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("String", "iterate(_)")
-bool string_iterate(WrenVM* vm, Value* args) @nogc
+bool string_iterate(WrenVM* vm, Value* args)
 {
     ObjString* string_ = AS_STRING(args[0]);
 
@@ -1344,7 +1344,7 @@ bool string_iterate(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("String", "iterateByte(_)")
-bool string_iterateByte(WrenVM* vm, Value* args) @nogc
+bool string_iterateByte(WrenVM* vm, Value* args)
 {
     ObjString* string_ = AS_STRING(args[0]);
 
@@ -1368,7 +1368,7 @@ bool string_iterateByte(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("String", "iteratorValue(_)")
-bool string_iteratorValue(WrenVM* vm, Value* args) @nogc
+bool string_iteratorValue(WrenVM* vm, Value* args)
 {
     ObjString* string_ = AS_STRING(args[0]);
     uint index = validateIndex(vm, args[1], string_.length, "Iterator");
@@ -1378,7 +1378,7 @@ bool string_iteratorValue(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("String", "$")
-bool string_dollar(WrenVM* vm, Value* args) @nogc
+bool string_dollar(WrenVM* vm, Value* args)
 {
     if (vm.config.dollarOperatorFn)
         return vm.config.dollarOperatorFn(vm, args);
@@ -1388,14 +1388,14 @@ bool string_dollar(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("String", "+(_)")
-bool string_plus(WrenVM* vm, Value* args) @nogc
+bool string_plus(WrenVM* vm, Value* args)
 {
     if (!validateString(vm, args[1], "Right operand")) return false;
     return RETURN_VAL(args, wrenStringFormat(vm, "@@", args[0], args[1]));
 }
 
 @WrenPrimitive("String", "[_]")
-bool string_subscript(WrenVM* vm, Value* args) @nogc
+bool string_subscript(WrenVM* vm, Value* args)
 {
     ObjString* string_ = AS_STRING(args[0]);
 
@@ -1421,13 +1421,13 @@ bool string_subscript(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("String", "toString")
-bool string_toString(WrenVM* vm, Value* args) @nogc
+bool string_toString(WrenVM* vm, Value* args)
 {
     return RETURN_VAL(args, args[0]);
 }
 
 @WrenPrimitive("System", "clock")
-bool system_clock(WrenVM* vm, Value* args) @nogc
+bool system_clock(WrenVM* vm, Value* args)
 {
     version (Posix) {
         import core.sys.posix.stdc.time : clock, CLOCKS_PER_SEC;
@@ -1440,14 +1440,14 @@ bool system_clock(WrenVM* vm, Value* args) @nogc
 }
 
 @WrenPrimitive("System", "gc()")
-bool system_gc(WrenVM* vm, Value* args) @nogc
+bool system_gc(WrenVM* vm, Value* args)
 {
     wrenCollectGarbage(vm);
     return RETURN_NULL(args);
 }
 
 @WrenPrimitive("System", "writeString_(_)")
-bool system_writeString(WrenVM* vm, Value* args) @nogc
+bool system_writeString(WrenVM* vm, Value* args)
 {
     if (vm.config.writeFn != null)
     {
@@ -1459,7 +1459,7 @@ bool system_writeString(WrenVM* vm, Value* args) @nogc
 
 // Wren addition for D embedding
 @WrenPrimitive("System", "isDebugBuild")
-bool system_is_debug_build(WrenVM* vm, Value* args) @nogc
+bool system_is_debug_build(WrenVM* vm, Value* args)
 {
     debug
     {    
@@ -1472,7 +1472,7 @@ bool system_is_debug_build(WrenVM* vm, Value* args) @nogc
 }
 
 // Creates either the Object or Class class in the core module with [name].
-ObjClass* defineClass(WrenVM* vm, ObjModule* module_, const(char)* name) @nogc
+ObjClass* defineClass(WrenVM* vm, ObjModule* module_, const(char)* name)
 {
   ObjString* nameString = AS_STRING(wrenNewString(vm, name));
   wrenPushRoot(vm, cast(Obj*)nameString);
@@ -1499,7 +1499,7 @@ private void registerPrimitives(string className)(WrenVM* vm, ObjClass* classObj
     }}
 }
 
-void wrenInitializeCore(WrenVM* vm) @nogc
+void wrenInitializeCore(WrenVM* vm)
 {
     ObjModule* coreModule = wrenNewModule(vm, null);
     wrenPushRoot(vm, cast(Obj*)coreModule);

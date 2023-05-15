@@ -1,6 +1,6 @@
 module wren.utils;
 
-nothrow @nogc:
+
 
 import core.stdc.stdlib: strtod;
 import core.stdc.string;
@@ -12,21 +12,21 @@ struct ByteBuffer
     int capacity;
 };
 
-void wrenByteBufferInit(ByteBuffer* buffer) nothrow @nogc
+void wrenByteBufferInit(ByteBuffer* buffer) 
 {
     buffer.data = null;
     buffer.capacity = 0;
     buffer.count = 0;
 }
 
-void wrenByteBufferClear(VM)(VM* vm, ByteBuffer* buffer) @nogc
+void wrenByteBufferClear(VM)(VM* vm, ByteBuffer* buffer)
 {
     import wren.vm : wrenReallocate;
     wrenReallocate(vm, buffer.data, 0, 0);
     wrenByteBufferInit(buffer);
 }
 
-void wrenByteBufferFill(VM)(VM* vm, ByteBuffer* buffer, ubyte data, int count) @nogc
+void wrenByteBufferFill(VM)(VM* vm, ByteBuffer* buffer, ubyte data, int count)
 {
     import wren.vm : wrenReallocate;
     if (buffer.capacity < buffer.count + count) {
@@ -41,7 +41,7 @@ void wrenByteBufferFill(VM)(VM* vm, ByteBuffer* buffer, ubyte data, int count) @
     }
 }
 
-void wrenByteBufferWrite(VM)(VM* vm, ByteBuffer* buffer, ubyte data) @nogc
+void wrenByteBufferWrite(VM)(VM* vm, ByteBuffer* buffer, ubyte data)
 {
     wrenByteBufferFill(vm, buffer, data, 1);
 }
@@ -53,21 +53,21 @@ struct IntBuffer
     int capacity;
 };
 
-void wrenIntBufferInit(IntBuffer* buffer) nothrow @nogc
+void wrenIntBufferInit(IntBuffer* buffer) 
 {
     buffer.data = null;
     buffer.capacity = 0;
     buffer.count = 0;
 }
 
-void wrenIntBufferClear(VM)(VM* vm, IntBuffer* buffer) @nogc
+void wrenIntBufferClear(VM)(VM* vm, IntBuffer* buffer)
 {
     import wren.vm : wrenReallocate;
     wrenReallocate(vm, buffer.data, 0, 0);
     wrenIntBufferInit(buffer);
 }
 
-void wrenIntBufferFill(VM)(VM* vm, IntBuffer* buffer, int data, int count) @nogc
+void wrenIntBufferFill(VM)(VM* vm, IntBuffer* buffer, int data, int count)
 {
     import wren.vm : wrenReallocate;
     if (buffer.capacity < buffer.count + count) {
@@ -82,7 +82,7 @@ void wrenIntBufferFill(VM)(VM* vm, IntBuffer* buffer, int data, int count) @nogc
     }
 }
 
-void wrenIntBufferWrite(VM)(VM* vm, IntBuffer* buffer, int data) @nogc
+void wrenIntBufferWrite(VM)(VM* vm, IntBuffer* buffer, int data)
 {
     wrenIntBufferFill(vm, buffer, data, 1);
 }
@@ -90,7 +90,7 @@ void wrenIntBufferWrite(VM)(VM* vm, IntBuffer* buffer, int data) @nogc
 // Returns the number of bytes needed to encode [value] in UTF-8.
 //
 // Returns 0 if [value] is too large to encode.
-int wrenUtf8EncodeNumBytes(int value) @nogc
+int wrenUtf8EncodeNumBytes(int value)
 {
   assert(value >= 0, "Cannot encode a negative value.");
   
@@ -106,7 +106,7 @@ int wrenUtf8EncodeNumBytes(int value) @nogc
 // enough to hold the encoded result.
 //
 // Returns the number of written bytes.
-int wrenUtf8Encode(int value, ubyte* bytes) @nogc
+int wrenUtf8Encode(int value, ubyte* bytes)
 {
   if (value <= 0x7f)
   {
@@ -153,7 +153,7 @@ int wrenUtf8Encode(int value, ubyte* bytes) @nogc
 // returning the code point.
 //
 // Returns -1 if the bytes are not a valid UTF-8 sequence.
-int wrenUtf8Decode(ubyte* bytes, uint length) @nogc
+int wrenUtf8Decode(ubyte* bytes, uint length)
 {
   // Single byte (i.e. fits in ASCII).
   if (*bytes <= 0x7f) return *bytes;
@@ -205,7 +205,7 @@ int wrenUtf8Decode(ubyte* bytes, uint length) @nogc
 //
 // If the character at that index is not the beginning of a UTF-8 sequence,
 // returns 0.
-int wrenUtf8DecodeNumBytes(ubyte byte_) @nogc
+int wrenUtf8DecodeNumBytes(ubyte byte_)
 {
   // If the byte starts with 10xxxxx, it's the middle of a UTF-8 sequence, so
   // don't count it at all.
@@ -221,7 +221,7 @@ int wrenUtf8DecodeNumBytes(ubyte byte_) @nogc
 
 // From: http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2Float
 // Returns the smallest power of two that is equal to or greater than [n].
-int wrenPowerOf2Ceil(int n) nothrow @nogc
+int wrenPowerOf2Ceil(int n) 
 {
   n--;
   n |= n >> 1;
@@ -237,7 +237,7 @@ int wrenPowerOf2Ceil(int n) nothrow @nogc
 // Validates that [value] is within `[0, count)`. Also allows
 // negative indices which map backwards from the end. Returns the valid positive
 // index value. If invalid, returns `uint.max`.
-uint wrenValidateIndex(uint count, long value) @nogc
+uint wrenValidateIndex(uint count, long value)
 {
   // Negative indices count from the end.
   if (value < 0) value = count + value;
@@ -290,7 +290,7 @@ unittest
 /// Larger values are clamped to this -2147483648 to 2147483647 range.
 public int convertStringToInteger(const(char)* s, 
                                   bool mustConsumeEntireInput,
-                                  bool* err) pure nothrow @nogc
+                                  bool* err) pure 
 {
     if (s is null)
     {
@@ -345,7 +345,7 @@ unittest
 ///     err: optional bool
 public double convertStringToDouble(const(char)* s, 
                                     bool mustConsumeEntireInput,
-                                    bool* err) pure nothrow @nogc
+                                    bool* err) pure 
 {
     if (s is null)
     {
@@ -419,7 +419,7 @@ unittest
 private double stb__clex_parse_number_literal(const(char)* p, 
                                               const(char)**q, 
                                               bool* err,
-                                              bool allowFloat) pure nothrow @nogc
+                                              bool allowFloat) pure 
 {
     const(char)* s = p;
     double value=0;
@@ -533,7 +533,7 @@ private double stb__clex_parse_number_literal(const(char)* p,
     return value;
 }
 
-private double stb__clex_pow(double base, uint exponent) pure nothrow @nogc
+private double stb__clex_pow(double base, uint exponent) pure 
 {
     double value=1;
     for ( ; exponent; exponent >>= 1) {

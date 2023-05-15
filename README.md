@@ -1,7 +1,7 @@
 # wren-port
 
 [Wren](https://wren.io/) is a small, fast, class-based concurrent scripting language.
-`wren-port` is a port of the Wren programming language implementation to D, intended for embedding. This is useful is you want a `nothrow @nogc` fast interpreter in your D application.
+`wren-port` is a port of the Wren programming language implementation to D, intended for embedding. This is useful is you want a `` fast interpreter in your D application.
 
 The original Wren implementation is [here](https://github.com/wren-lang).
 

@@ -1,6 +1,6 @@
 module wren.opcodes;
 
-nothrow @nogc:
+
 
 // This defines the bytecode instructions used by the VM. 
 // The first argument is the name of the opcode. The second is its "stack

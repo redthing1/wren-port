@@ -7,14 +7,14 @@ import wren.common;
 
 __gshared WrenVM* vm;
 
-nothrow @nogc:
+
 
 // Reads the contents of the file at [path] and returns it as a heap allocated
 // string.
 //
 // Returns `NULL` if the path could not be found. Exits if it was found but
 // could not be read.
-char* readFile(const char* path) @nogc
+char* readFile(const char* path)
 {
     FILE* file = fopen(path, "rb");
     if (file == null) return null;
@@ -47,13 +47,13 @@ char* readFile(const char* path) @nogc
     return buffer;
 }
 
-void write(WrenVM* vm, const(char)* text) @nogc
+void write(WrenVM* vm, const(char)* text)
 {
     printf("%s", text);
 }
 
 void reportError(WrenVM* vm, WrenErrorType type,
-                 const(char)* module_, int line, const(char)* message) @nogc
+                 const(char)* module_, int line, const(char)* message)
 {
     switch (type) with(WrenErrorType)
     {
