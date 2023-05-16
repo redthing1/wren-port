@@ -1228,7 +1228,7 @@ bool string_fromByte(WrenVM* vm, Value* args)
     return RETURN_VAL(args, wrenStringFromByte(vm, cast(ubyte)byte_));
 }
 
-@WrenPrimitive("String", "byteAt(_)")
+@WrenPrimitive("String", "byteAt_(_)")
 bool string_byteAt(WrenVM* vm, Value* args)
 {
     ObjString* string_ = AS_STRING(args[0]);
@@ -1239,13 +1239,13 @@ bool string_byteAt(WrenVM* vm, Value* args)
     return RETURN_NUM(args, cast(ubyte)string_.value[index]);
 }
 
-@WrenPrimitive("String", "byteCount")
+@WrenPrimitive("String", "byteCount_")
 bool string_byteCount(WrenVM* vm, Value* args)
 {
     return RETURN_NUM(args, AS_STRING(args[0]).length);
 }
 
-@WrenPrimitive("String", "codePointAt(_)")
+@WrenPrimitive("String", "codePointAt_(_)")
 bool string_codePointAt(WrenVM* vm, Value* args)
 {
     import wren.utils : wrenUtf8Decode;
