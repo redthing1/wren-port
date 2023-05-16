@@ -1343,7 +1343,7 @@ bool string_iterate(WrenVM* vm, Value* args)
     return RETURN_NUM(args, index);   
 }
 
-@WrenPrimitive("String", "iterateByte(_)")
+@WrenPrimitive("String", "iterateByte_(_)")
 bool string_iterateByte(WrenVM* vm, Value* args)
 {
     ObjString* string_ = AS_STRING(args[0]);
